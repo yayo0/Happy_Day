@@ -127,13 +127,13 @@ class _CurationSectionState extends State<CurationSection> {
             child: Image.network(
               curation['image']!,
               width: 170,
-              height: 115,
+              height: 111,
               fit: BoxFit.cover,
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
                 return Container(
                   width: 170,
-                  height: 115,
+                  height: 111,
                   color: AppColors.gray100,
                   child: Center(
                     child: CircularProgressIndicator(
@@ -149,7 +149,7 @@ class _CurationSectionState extends State<CurationSection> {
               errorBuilder: (context, error, stackTrace) {
                 return Container(
                   width: 170,
-                  height: 115,
+                  height: 111,
                   color: AppColors.gray100,
                   child: const Icon(
                     Icons.image_not_supported,

@@ -285,7 +285,11 @@ class _MakeFundingScreenState extends State<MakeFundingScreen> {
                 );
                 Navigator.of(context, rootNavigator: true).pop();
               },
-              icon: const Icon(Icons.close, color: AppColors.textDark, size: 22),
+              icon: const Icon(
+                Icons.close,
+                color: AppColors.textDark,
+                size: 22,
+              ),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),
@@ -311,10 +315,16 @@ class _MakeFundingScreenState extends State<MakeFundingScreen> {
             // 오른쪽 X 버튼만
             IconButton(
               onPressed: () {
-                debugPrint('Completion X pressed, will pop from MakeFundingScreen');
+                debugPrint(
+                  'Completion X pressed, will pop from MakeFundingScreen',
+                );
                 Navigator.of(context, rootNavigator: true).pop();
               },
-              icon: const Icon(Icons.close, color: AppColors.textDark, size: 22),
+              icon: const Icon(
+                Icons.close,
+                color: AppColors.textDark,
+                size: 22,
+              ),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),

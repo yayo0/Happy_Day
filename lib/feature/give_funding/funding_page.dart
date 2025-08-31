@@ -17,7 +17,8 @@ class FundingPage extends StatefulWidget {
   State<FundingPage> createState() => _FundingPageState();
 }
 
-class _FundingPageState extends State<FundingPage> with SingleTickerProviderStateMixin {
+class _FundingPageState extends State<FundingPage>
+    with SingleTickerProviderStateMixin {
   Map<String, dynamic>? _selectedParticipant;
   late final AnimationController _popupController;
   bool _showExitConfirm = false;
@@ -65,7 +66,9 @@ class _FundingPageState extends State<FundingPage> with SingleTickerProviderStat
     try {
       final end = DateTime.parse(endDateIso);
       final today = DateTime.now();
-      return end.difference(DateTime(today.year, today.month, today.day)).inDays;
+      return end
+          .difference(DateTime(today.year, today.month, today.day))
+          .inDays;
     } catch (_) {
       return 0;
     }
@@ -73,7 +76,10 @@ class _FundingPageState extends State<FundingPage> with SingleTickerProviderStat
 
   void _navigateToTossPayment() {
     final userName = _guestNameController.text.trim();
-    final text = _guestAmountController.text.replaceAll(',', '').replaceAll(' ', '').replaceAll('원', '');
+    final text = _guestAmountController.text
+        .replaceAll(',', '')
+        .replaceAll(' ', '')
+        .replaceAll('원', '');
     final amount = int.tryParse(text) ?? 0;
     final targetName = widget.data['name'] as String? ?? '친구'; // 실제 펀딩 대상
 
@@ -102,11 +108,20 @@ class _FundingPageState extends State<FundingPage> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     final participants = (widget.data['paritcipants'] as List<dynamic>? ?? []);
-    final daysLeft = _daysLeft(widget.data['endDate'] as String? ?? DateTime.now().toIso8601String());
+    final daysLeft = _daysLeft(
+      widget.data['endDate'] as String? ?? DateTime.now().toIso8601String(),
+    );
     final String fundingType = (widget.data['type'] as String?) ?? '자유';
     final int totalPrice = (widget.data['price'] as int?) ?? 0;
-    final int alreadyFunded = participants.fold<int>(0, (sum, p) => sum + ((p as Map<String, dynamic>)['fundedAmount'] as int? ?? 0));
-    final int remainingAmount = (totalPrice - alreadyFunded).clamp(0, totalPrice);
+    final int alreadyFunded = participants.fold<int>(
+      0,
+      (sum, p) =>
+          sum + ((p as Map<String, dynamic>)['fundedAmount'] as int? ?? 0),
+    );
+    final int remainingAmount = (totalPrice - alreadyFunded).clamp(
+      0,
+      totalPrice,
+    );
     final bool isLastContributor = remainingAmount <= 0;
 
     return Scaffold(
@@ -115,15 +130,29 @@ class _FundingPageState extends State<FundingPage> with SingleTickerProviderStat
         children: [
           SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 20, bottom: 0),
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 20,
+                bottom: 0,
+              ),
               child: Column(
-                crossAxisAlignment: (_isCompleteStep || _isParticipateStep) ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+                crossAxisAlignment: (_isCompleteStep || _isParticipateStep)
+                    ? CrossAxisAlignment.center
+                    : CrossAxisAlignment.start,
                 children: [
                   // 상단 닫기 버튼 (우측 상단)
+                  const SizedBox(height: 20),
                   Row(
                     children: [
                       const SizedBox(height: 60),
-                      if ((_isParticipateStep || _isMessageStep || _isCharacterStep) && !_isFinalStep && !(_isCompleteStep && !_isMessageStep && !_isCharacterStep))
+                      if ((_isParticipateStep ||
+                              _isMessageStep ||
+                              _isCharacterStep) &&
+                          !_isFinalStep &&
+                          !(_isCompleteStep &&
+                              !_isMessageStep &&
+                              !_isCharacterStep))
                         GestureDetector(
                           onTap: () {
                             setState(() {
@@ -143,7 +172,11 @@ class _FundingPageState extends State<FundingPage> with SingleTickerProviderStat
                               }
                             });
                           },
-                          child: Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.textDark),
+                          child: Icon(
+                            Icons.arrow_back_ios_new,
+                            size: 20,
+                            color: AppColors.textDark,
+                          ),
                         ),
                       const Spacer(),
                       GestureDetector(
@@ -156,7 +189,11 @@ class _FundingPageState extends State<FundingPage> with SingleTickerProviderStat
                             });
                           }
                         },
-                        child: Icon(Icons.close, size: 22, color: AppColors.textDark),
+                        child: Icon(
+                          Icons.close,
+                          size: 22,
+                          color: AppColors.textDark,
+                        ),
                       ),
                     ],
                   ),
@@ -220,100 +257,122 @@ class _FundingPageState extends State<FundingPage> with SingleTickerProviderStat
             Positioned(
               left: MediaQuery.of(context).viewInsets.bottom > 0 ? 0 : 20,
               right: MediaQuery.of(context).viewInsets.bottom > 0 ? 0 : 20,
-              bottom: MediaQuery.of(context).viewInsets.bottom > 0
-                  ? 0
-                  : 32,
+              bottom: MediaQuery.of(context).viewInsets.bottom > 0 ? 0 : 32,
               child: SizedBox(
                 height: 52,
                 child: ElevatedButton(
-                onPressed: _isFinalStep
-                    ? null // 최종 화면에서는 하단 버튼이 나가기/공유하기로 분리됨
-                    : _isCharacterStep
-                        ? () {
-                            if (_selectedCharacterType != null) {
-                              setState(() {
-                                _isFinalStep = true;
-                              });
-                            }
-                          }
-                    : _isMessageStep
-                        ? () {
+                  onPressed: _isFinalStep
+                      ? null // 최종 화면에서는 하단 버튼이 나가기/공유하기로 분리됨
+                      : _isCharacterStep
+                      ? () {
+                          if (_selectedCharacterType != null) {
                             setState(() {
-                              _isCharacterStep = true;
+                              _isFinalStep = true;
                             });
                           }
-                        : _isCompleteStep
-                            ? () {
-                                setState(() {
-                                  _isMessageStep = true;
-                                });
-                              }
-                    : _isParticipateStep
-                        ? (() {
-                            final hasName = _guestNameController.text.trim().isNotEmpty;
-                            if (!_isAmountStep) {
-                              if (!hasName) return;
-                              setState(() => _isAmountStep = true);
+                        }
+                      : _isMessageStep
+                      ? () {
+                          setState(() {
+                            _isCharacterStep = true;
+                          });
+                        }
+                      : _isCompleteStep
+                      ? () {
+                          setState(() {
+                            _isMessageStep = true;
+                          });
+                        }
+                      : _isParticipateStep
+                      ? (() {
+                          final hasName = _guestNameController.text
+                              .trim()
+                              .isNotEmpty;
+                          if (!_isAmountStep) {
+                            if (!hasName) return;
+                            setState(() => _isAmountStep = true);
+                            return;
+                          }
+                          // amount step
+                          final text = _guestAmountController.text
+                              .replaceAll(',', '')
+                              .replaceAll(' ', '')
+                              .replaceAll('원', '');
+                          final amount = int.tryParse(text) ?? 0;
+                          if (fundingType == '자유') {
+                            if (remainingAmount > 0 &&
+                                (amount <= 0 || amount > remainingAmount))
                               return;
-                            }
-                            // amount step
-                            final text = _guestAmountController.text.replaceAll(',', '').replaceAll(' ', '').replaceAll('원', '');
-                            final amount = int.tryParse(text) ?? 0;
-                            if (fundingType == '자유') {
-                              if (remainingAmount > 0 && (amount <= 0 || amount > remainingAmount)) return;
-                            } else {
-                              if (amount <= 0) return;
-                            }
-                            // 결제 확인 바텀시트 표시
-                            setState(() {
-                              _showPaymentConfirm = true;
-                            });
-                          })
-                        : () {
-                            setState(() {
-                              _showJoinConfirm = true;
-                            });
-                          },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _isCharacterStep
-                      ? (_selectedCharacterType != null ? AppColors.primaryBase : AppColors.baseLight)
-                      : _isMessageStep
-                          ? AppColors.primaryBase
-                          : _isCompleteStep
+                          } else {
+                            if (amount <= 0) return;
+                          }
+                          // 결제 확인 바텀시트 표시
+                          setState(() {
+                            _showPaymentConfirm = true;
+                          });
+                        })
+                      : () {
+                          setState(() {
+                            _showJoinConfirm = true;
+                          });
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _isCharacterStep
+                        ? (_selectedCharacterType != null
                               ? AppColors.primaryBase
-                              : _isParticipateStep
-                                  ? (() {
-                                      if (!_isAmountStep) {
-                                        return _guestNameController.text.trim().isNotEmpty ? AppColors.primaryBase : AppColors.baseLight;
-                                      }
-                                      final text = _guestAmountController.text.replaceAll(',', '').replaceAll(' ', '').replaceAll('원', '');
-                                      final amount = int.tryParse(text) ?? 0;
-                                      final valid = fundingType == '자유'
-                                          ? (remainingAmount > 0 ? amount > 0 && amount <= remainingAmount : amount > 0)
-                                          : amount > 0;
-                                      return valid ? AppColors.primaryBase : AppColors.baseLight;
-                                    })()
-                                  : AppColors.primaryBase,
-                  disabledBackgroundColor: AppColors.baseLight,
-                  shape: RoundedRectangleBorder(borderRadius: MediaQuery.of(context).viewInsets.bottom > 0 ? BorderRadius.circular(0) : BorderRadius.circular(16)),
-                ),
-                child: Text(
-                  _isCharacterStep
-                      ? '다음'
-                      : _isMessageStep
-                          ? '다음'
-                          : _isCompleteStep
-                              ? '축하 메시지 남기러 가기'
-                              : _isParticipateStep
-                                  ? (_isAmountStep
-                                      ? (isLastContributor ? '펀딩 완성' : '완료')
-                                      : '다음')
-                                  : '펀딩 참여하기',
-                  style: AppTypography.button2.copyWith(color: AppColors.baseWhite),
+                              : AppColors.baseLight)
+                        : _isMessageStep
+                        ? AppColors.primaryBase
+                        : _isCompleteStep
+                        ? AppColors.primaryBase
+                        : _isParticipateStep
+                        ? (() {
+                            if (!_isAmountStep) {
+                              return _guestNameController.text.trim().isNotEmpty
+                                  ? AppColors.primaryBase
+                                  : AppColors.baseLight;
+                            }
+                            final text = _guestAmountController.text
+                                .replaceAll(',', '')
+                                .replaceAll(' ', '')
+                                .replaceAll('원', '');
+                            final amount = int.tryParse(text) ?? 0;
+                            final valid = fundingType == '자유'
+                                ? (remainingAmount > 0
+                                      ? amount > 0 && amount <= remainingAmount
+                                      : amount > 0)
+                                : amount > 0;
+                            return valid
+                                ? AppColors.primaryBase
+                                : AppColors.baseLight;
+                          })()
+                        : AppColors.primaryBase,
+                    disabledBackgroundColor: AppColors.baseLight,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
+                          ? BorderRadius.circular(0)
+                          : BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Text(
+                    _isCharacterStep
+                        ? '다음'
+                        : _isMessageStep
+                        ? '다음'
+                        : _isCompleteStep
+                        ? '축하 메시지 남기러 가기'
+                        : _isParticipateStep
+                        ? (_isAmountStep
+                              ? (isLastContributor ? '펀딩 완성' : '완료')
+                              : '다음')
+                        : '펀딩 참여하기',
+                    style: AppTypography.button2.copyWith(
+                      color: AppColors.baseWhite,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
 
           if (_selectedParticipant != null)
             Positioned.fill(
@@ -323,10 +382,14 @@ class _FundingPageState extends State<FundingPage> with SingleTickerProviderStat
                   color: Colors.black.withOpacity(0.35),
                   alignment: Alignment.center,
                   child: ScaleTransition(
-                    scale: CurvedAnimation(parent: _popupController, curve: Curves.easeOutBack),
+                    scale: CurvedAnimation(
+                      parent: _popupController,
+                      curve: Curves.easeOutBack,
+                    ),
                     child: _LetterCard(
                       participant: _selectedParticipant!,
-                      onClose: () => setState(() => _selectedParticipant = null),
+                      onClose: () =>
+                          setState(() => _selectedParticipant = null),
                     ),
                   ),
                 ),
@@ -365,7 +428,8 @@ class _FundingPageState extends State<FundingPage> with SingleTickerProviderStat
                       _isParticipateStep = true;
                     });
                     Future.delayed(const Duration(milliseconds: 100), () {
-                      if (mounted) FocusScope.of(context).requestFocus(_guestNameFocus);
+                      if (mounted)
+                        FocusScope.of(context).requestFocus(_guestNameFocus);
                     });
                   },
                 ),
@@ -378,9 +442,13 @@ class _FundingPageState extends State<FundingPage> with SingleTickerProviderStat
                 color: Colors.black.withOpacity(0.35),
                 alignment: Alignment.bottomCenter,
                 child: _PaymentConfirmBottomSheet(
-                  targetName: widget.data['name'] as String? ?? '친구', // 펀딩받는 사람 이름
+                  targetName:
+                      widget.data['name'] as String? ?? '친구', // 펀딩받는 사람 이름
                   amount: (() {
-                    final text = _guestAmountController.text.replaceAll(',', '').replaceAll(' ', '').replaceAll('원', '');
+                    final text = _guestAmountController.text
+                        .replaceAll(',', '')
+                        .replaceAll(' ', '')
+                        .replaceAll('원', '');
                     return int.tryParse(text) ?? 0;
                   })(),
                   onCancel: () => setState(() => _showPaymentConfirm = false),
@@ -407,7 +475,8 @@ class _LetterCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> letter = (participant['letter'] as Map<String, dynamic>?) ?? {};
+    final Map<String, dynamic> letter =
+        (participant['letter'] as Map<String, dynamic>?) ?? {};
     final bool isPrivacy = letter['isPrivacy'] == true;
     final String content = (letter['content'] as String?) ?? '';
     final String name = (participant['name'] as String?) ?? '';
@@ -430,9 +499,19 @@ class _LetterCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text('From.', style: AppTypography.suiteBody1.copyWith(color: AppColors.textDarker)),
+                      Text(
+                        'From.',
+                        style: AppTypography.suiteBody1.copyWith(
+                          color: AppColors.textDarker,
+                        ),
+                      ),
                       const SizedBox(width: 8),
-                      Text(name, style: AppTypography.suiteBody1.copyWith(color: AppColors.primaryBase)),
+                      Text(
+                        name,
+                        style: AppTypography.suiteBody1.copyWith(
+                          color: AppColors.primaryBase,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -446,7 +525,9 @@ class _LetterCard extends StatelessWidget {
                     padding: const EdgeInsets.all(16),
                     child: Text(
                       isPrivacy ? '비밀 메시지입니다.' : content,
-                      style: AppTypography.suiteBody1.copyWith(color: AppColors.textDarker),
+                      style: AppTypography.suiteBody1.copyWith(
+                        color: AppColors.textDarker,
+                      ),
                     ),
                   ),
                 ],
@@ -473,7 +554,7 @@ class _ExitConfirmDialog extends StatelessWidget {
   final bool isCompleteStep;
 
   const _ExitConfirmDialog({
-    required this.onStay, 
+    required this.onStay,
     required this.onExit,
     this.isCompleteStep = false,
   });
@@ -483,7 +564,7 @@ class _ExitConfirmDialog extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: Container(
-        width:300,
+        width: 300,
         decoration: BoxDecoration(
           color: AppColors.baseWhite,
           borderRadius: BorderRadius.circular(16),
@@ -496,13 +577,15 @@ class _ExitConfirmDialog extends StatelessWidget {
             Center(
               child: Text(
                 '정말 나가시겠어요?',
-                style: AppTypography.title4.copyWith(color: AppColors.textDarkest),
+                style: AppTypography.title4.copyWith(
+                  color: AppColors.textDarkest,
+                ),
               ),
             ),
             const SizedBox(height: 8),
             Center(
               child: Text(
-                isCompleteStep 
+                isCompleteStep
                     ? '이 화면을 나가면\n친구에게 메시지를 남길 수 없어요'
                     : '이 화면을 나가면\n선물 펀딩에 참여할 수 없어요',
                 textAlign: TextAlign.center,
@@ -517,12 +600,16 @@ class _ExitConfirmDialog extends StatelessWidget {
                     onPressed: onExit,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.baseLighter,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       elevation: 0,
                     ),
                     child: Text(
                       '나갈래요',
-                      style: AppTypography.button3.copyWith(color: AppColors.textDark),
+                      style: AppTypography.button3.copyWith(
+                        color: AppColors.textDark,
+                      ),
                     ),
                   ),
                 ),
@@ -532,12 +619,16 @@ class _ExitConfirmDialog extends StatelessWidget {
                     onPressed: onStay,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryBase,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                       elevation: 0,
                     ),
                     child: Text(
                       isCompleteStep ? '계속할게요' : '있을게요',
-                      style: AppTypography.button3.copyWith(color: AppColors.baseWhite),
+                      style: AppTypography.button3.copyWith(
+                        color: AppColors.baseWhite,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -556,7 +647,10 @@ class _JoinConfirmDialog extends StatelessWidget {
   final VoidCallback onPrimary; // 로그인/회원가입
   final VoidCallback onSecondary; // 비회원으로 펀딩
 
-  const _JoinConfirmDialog({required this.onPrimary, required this.onSecondary});
+  const _JoinConfirmDialog({
+    required this.onPrimary,
+    required this.onSecondary,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -576,7 +670,9 @@ class _JoinConfirmDialog extends StatelessWidget {
             Center(
               child: Text(
                 '회원이신가요?',
-                style: AppTypography.title4.copyWith(color: AppColors.textDarkest),
+                style: AppTypography.title4.copyWith(
+                  color: AppColors.textDarkest,
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -593,12 +689,16 @@ class _JoinConfirmDialog extends StatelessWidget {
               onPressed: onPrimary,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryBase,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 elevation: 0,
               ),
               child: Text(
                 '로그인/회원가입',
-                style: AppTypography.button3.copyWith(color: AppColors.baseWhite),
+                style: AppTypography.button3.copyWith(
+                  color: AppColors.baseWhite,
+                ),
               ),
             ),
             const SizedBox(height: 4),
@@ -606,12 +706,16 @@ class _JoinConfirmDialog extends StatelessWidget {
               onPressed: onSecondary,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.baseLighter,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 elevation: 0,
               ),
               child: Text(
                 '비회원으로 펀딩',
-                style: AppTypography.button3.copyWith(color: AppColors.textDarker),
+                style: AppTypography.button3.copyWith(
+                  color: AppColors.textDarker,
+                ),
               ),
             ),
           ],
@@ -665,7 +769,9 @@ class _PaymentConfirmBottomSheet extends StatelessWidget {
           children: [
             Text(
               '결제하시겠습니까?',
-              style: AppTypography.title1.copyWith(color: AppColors.textDarkest),
+              style: AppTypography.title1.copyWith(
+                color: AppColors.textDarkest,
+              ),
             ),
             const SizedBox(height: 40),
             Center(
@@ -673,16 +779,22 @@ class _PaymentConfirmBottomSheet extends StatelessWidget {
                 children: [
                   Text(
                     '$targetName님께',
-                    style: AppTypography.title3.copyWith(color: AppColors.textDarkest),
+                    style: AppTypography.title3.copyWith(
+                      color: AppColors.textDarkest,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   RichText(
                     text: TextSpan(
-                      style: AppTypography.title3.copyWith(color: AppColors.textDarkest),
+                      style: AppTypography.title3.copyWith(
+                        color: AppColors.textDarkest,
+                      ),
                       children: [
                         TextSpan(
                           text: '${_formatCurrency(amount)}원',
-                          style: AppTypography.title1.copyWith(color: AppColors.primaryBase),
+                          style: AppTypography.title1.copyWith(
+                            color: AppColors.primaryBase,
+                          ),
                         ),
                         const TextSpan(text: ' 펀딩하기'),
                       ],
@@ -715,12 +827,16 @@ class _PaymentConfirmBottomSheet extends StatelessWidget {
                       onPressed: onCancel,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryLightest,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                         elevation: 0,
                       ),
                       child: Text(
                         '취소',
-                        style: AppTypography.button2.copyWith(color: AppColors.primaryBase),
+                        style: AppTypography.button2.copyWith(
+                          color: AppColors.primaryBase,
+                        ),
                       ),
                     ),
                   ),
@@ -733,12 +849,16 @@ class _PaymentConfirmBottomSheet extends StatelessWidget {
                       onPressed: onConfirm,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryBase,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                         elevation: 0,
                       ),
                       child: Text(
                         '동의',
-                        style: AppTypography.button2.copyWith(color: AppColors.baseWhite),
+                        style: AppTypography.button2.copyWith(
+                          color: AppColors.baseWhite,
+                        ),
                       ),
                     ),
                   ),
@@ -801,7 +921,9 @@ class _GuestFundingFormState extends State<_GuestFundingForm> {
 
   @override
   Widget build(BuildContext context) {
-    final EdgeInsets contentPadding = const EdgeInsets.symmetric(horizontal: 20);
+    final EdgeInsets contentPadding = const EdgeInsets.symmetric(
+      horizontal: 20,
+    );
     final bool isTyping = widget.isTypingName;
 
     return Material(
@@ -831,12 +953,20 @@ class _GuestFundingFormState extends State<_GuestFundingForm> {
                       children: [
                         GestureDetector(
                           onTap: widget.onBack,
-                          child: Icon(Icons.arrow_back_ios_new, size: 20, color: AppColors.textDark),
+                          child: Icon(
+                            Icons.arrow_back_ios_new,
+                            size: 20,
+                            color: AppColors.textDark,
+                          ),
                         ),
                         const Spacer(),
                         GestureDetector(
                           onTap: widget.onClose,
-                          child: Icon(Icons.close, size: 20, color: AppColors.textDark),
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: AppColors.textDark,
+                          ),
                         ),
                       ],
                     ),
@@ -848,16 +978,33 @@ class _GuestFundingFormState extends State<_GuestFundingForm> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('생일선물 펀딩', style: AppTypography.caption1.copyWith(color: AppColors.primaryLight)),
+                        Text(
+                          '생일선물 펀딩',
+                          style: AppTypography.caption1.copyWith(
+                            color: AppColors.primaryLight,
+                          ),
+                        ),
                         const SizedBox(height: 4),
                         Text(
                           '차은우ㅇㅇ의 웃으면 안되는 생일파티',
-                          style: AppTypography.title5.copyWith(color: AppColors.textDark),
+                          style: AppTypography.title5.copyWith(
+                            color: AppColors.textDark,
+                          ),
                         ),
                         const SizedBox(height: 24),
-                        Text('이름(닉네임)을 작성해주세요', style: AppTypography.title1.copyWith(color: AppColors.textDarker)),
+                        Text(
+                          '이름(닉네임)을 작성해주세요',
+                          style: AppTypography.title1.copyWith(
+                            color: AppColors.textDarker,
+                          ),
+                        ),
                         const SizedBox(height: 8),
-                        Text('친구에게 표시될 이름이에요 (최대 5글자)', style: AppTypography.title5.copyWith(color: AppColors.primaryBase)),
+                        Text(
+                          '친구에게 표시될 이름이에요 (최대 5글자)',
+                          style: AppTypography.title5.copyWith(
+                            color: AppColors.primaryBase,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -879,14 +1026,20 @@ class _GuestFundingFormState extends State<_GuestFundingForm> {
                             contentPadding: EdgeInsets.zero,
                           ),
                           style: (isTyping
-                                  ? AppTypography.title3.copyWith(color: AppColors.textDarkest)
-                                  : AppTypography.title3.copyWith(color: AppColors.textDark)),
+                              ? AppTypography.title3.copyWith(
+                                  color: AppColors.textDarkest,
+                                )
+                              : AppTypography.title3.copyWith(
+                                  color: AppColors.textDark,
+                                )),
                           cursorColor: AppColors.primaryLight,
                         ),
                         Container(
                           height: 1.5,
                           color: !_hasName
-                              ? (isTyping ? AppColors.primaryLight : AppColors.textLightest)
+                              ? (isTyping
+                                    ? AppColors.primaryLight
+                                    : AppColors.textLightest)
                               : AppColors.textLight,
                         ),
                       ],
@@ -901,9 +1054,19 @@ class _GuestFundingFormState extends State<_GuestFundingForm> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('휴대폰 번호를 입력해주세요 (선택)', style: AppTypography.title3.copyWith(color: AppColors.textDarker)),
+                          Text(
+                            '휴대폰 번호를 입력해주세요 (선택)',
+                            style: AppTypography.title3.copyWith(
+                              color: AppColors.textDarker,
+                            ),
+                          ),
                           const SizedBox(height: 6),
-                          Text('친구에게 감사 메시지를 받을 수 있어요', style: AppTypography.title5.copyWith(color: AppColors.primaryBase.withOpacity(0.6))),
+                          Text(
+                            '친구에게 감사 메시지를 받을 수 있어요',
+                            style: AppTypography.title5.copyWith(
+                              color: AppColors.primaryBase.withOpacity(0.6),
+                            ),
+                          ),
                           const SizedBox(height: 16),
                           TextField(
                             enabled: !isTyping,
@@ -912,13 +1075,12 @@ class _GuestFundingFormState extends State<_GuestFundingForm> {
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.zero,
                             ),
-                            style: AppTypography.title3.copyWith(color: AppColors.textDark),
+                            style: AppTypography.title3.copyWith(
+                              color: AppColors.textDark,
+                            ),
                             cursorColor: AppColors.primaryLight,
                           ),
-                          Container(
-                            height: 1.5,
-                            color: AppColors.textLightest,
-                          ),
+                          Container(height: 1.5, color: AppColors.textLightest),
                         ],
                       ),
                     ),
@@ -941,13 +1103,21 @@ class _GuestFundingFormState extends State<_GuestFundingForm> {
                 child: ElevatedButton(
                   onPressed: _hasName ? () {} : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _hasName ? AppColors.primaryBase : AppColors.baseLight,
+                    backgroundColor: _hasName
+                        ? AppColors.primaryBase
+                        : AppColors.baseLight,
                     disabledBackgroundColor: AppColors.baseLight,
-                    shape: RoundedRectangleBorder(borderRadius: MediaQuery.of(context).viewInsets.bottom > 0 ? BorderRadius.circular(0) : BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: MediaQuery.of(context).viewInsets.bottom > 0
+                          ? BorderRadius.circular(0)
+                          : BorderRadius.circular(16),
+                    ),
                   ),
                   child: Text(
                     '다음',
-                    style: AppTypography.button2.copyWith(color: AppColors.baseWhite),
+                    style: AppTypography.button2.copyWith(
+                      color: AppColors.baseWhite,
+                    ),
                   ),
                 ),
               ),
@@ -958,5 +1128,3 @@ class _GuestFundingFormState extends State<_GuestFundingForm> {
     );
   }
 }
-
-
