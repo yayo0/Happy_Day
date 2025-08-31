@@ -123,7 +123,7 @@ class AppTypography {
     height: 1.0, // 100%
   );
 
-  static const TextStyle button2 = TextStyle(
+  static const TextStyle button2 = TextStyle( 
     fontFamily: 'Pretendard',
     fontSize: 16,
     fontWeight: FontWeight.w600, // SemiBold (600)
@@ -131,6 +131,13 @@ class AppTypography {
   );
 
   static const TextStyle button3 = TextStyle(
+    fontFamily: 'Pretendard',
+    fontSize: 16,
+    fontWeight: FontWeight.w600, // SemiBold (600)
+    height: 1.0, // 100%
+  );
+
+  static const TextStyle button4 = TextStyle(
     fontFamily: 'Pretendard',
     fontSize: 14,
     fontWeight: FontWeight.w600, // SemiBold (600)
@@ -143,6 +150,13 @@ class AppTypography {
     fontSize: 32,
     fontWeight: FontWeight.w800, // ExtraBold (800)
     height: 1.3,
+  );
+
+  static const TextStyle suiteTitle = TextStyle(
+    fontFamily: 'Suite',
+    fontSize: 28,
+    fontWeight: FontWeight.w600, // SemiBold (600)
+    height: 1.4,
   );
   
   static const TextStyle suiteTitle1 = TextStyle(
